@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 export default function CourseNavigation() {
   return (
     <div id="wd-courses-navigation">
