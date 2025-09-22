@@ -1,5 +1,5 @@
 import Link from "next/link";
-export default function Assignments() {
+export default function Assignments({ aid }: { aid: string }) {
   return (
     <div id="wd-assignments">
       <input placeholder="Search for Assignments"
@@ -11,7 +11,7 @@ export default function Assignments() {
       </h3>
       <ul id="wd-assignment-list">
         <li className="wd-assignment-list-item">
-          <Link href="/Courses/1234/Assignments/1234"
+          <Link href="/Courses/1234/Assignments/{aid}"
              className="wd-assignment-link">
             A1 - ENV + HTML
           </Link>
@@ -19,7 +19,7 @@ export default function Assignments() {
           Multiple Modules | <b>Not available until</b> May 6 at 12:00am | <b>Due</b> May 13 at 11:59pm | 100 pts
         </li>
         <li className="wd-assignment-list-item">
-          <Link href="/Courses/1234/Assignments/1235"
+          <Link href="/Courses/1234/Assignments/{aid}"
              className="wd-assignment-link">
             A2 - CSS + BOOTSTRAP
           </Link>
@@ -27,7 +27,7 @@ export default function Assignments() {
           Multiple Modules | <b>Not available until</b> May 13 at 12:00am | <b>Due</b> May 20 at 11:59pm | 100 pts
         </li>
         <li className="wd-assignment-list-item">
-          <Link href="/Courses/1234/Assignments/1236"
+          <Link href="/Courses/1234/Assignments/{aid}"
              className="wd-assignment-link">
             A3 - JAVASCRIPT + REACT
           </Link>
