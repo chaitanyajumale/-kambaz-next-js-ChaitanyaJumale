@@ -99,6 +99,54 @@ export default function Lab1() {
                 <td>2/10/21</td>
                 <td>90</td>
               </tr>
+              <tr>
+                <td>Q3</td>
+                <td>NextJS</td>
+                <td>2/12/21</td>
+                <td>92</td>
+              </tr>
+              <tr>
+                <td>Q4</td>
+                <td>ReactJS</td>
+                <td>7/10/22</td>
+                <td>100</td>
+              </tr>
+              <tr>
+                <td>Q5</td>
+                <td>Java</td>
+                <td>8/9/21</td>
+                <td>100</td>
+              </tr>
+              <tr>
+                <td>Q6</td>
+                <td>GO</td>
+                <td>2/18/21</td>
+                <td>89</td>
+              </tr>
+              <tr>
+                <td>Q7</td>
+                <td>VueJS</td>
+                <td>2/11/21</td>
+                <td>70</td>
+              </tr>
+              <tr>
+                <td>Q8</td>
+                <td>C++</td>
+                <td>2/20/21</td>
+                <td>100</td>
+              </tr>
+              <tr>
+                <td>Q9</td>
+                <td>C</td>
+                <td>2/21/21</td>
+                <td>68</td>
+              </tr>
+              <tr>
+                <td>Q10</td>
+                <td>Python</td>
+                <td>2/30/21</td>
+                <td>100</td>
+              </tr>
             </tbody>
             <tfoot>
               <tr>
