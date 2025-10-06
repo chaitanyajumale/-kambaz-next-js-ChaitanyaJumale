@@ -3,7 +3,7 @@
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import ModulesControls from "./ModulesControls";
-
+import ModuleControlButtons from "./ModuleControlButtons";
 import LessonControlButtons from "./LessenControlButtons";
 
 export default function Modules() {
@@ -17,7 +17,7 @@ export default function Modules() {
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
             Week 1, Lecture 1 - Course Introduction, Syllabus, Agenda
-            <ModulesControls />
+            <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
             <ListGroupItem className="wd-lesson p-3 ps-1">
@@ -55,7 +55,7 @@ export default function Modules() {
           <div className="wd-title p-3 ps-2 bg-secondary">
             <BsGripVertical className="me-2 fs-3" />
             Week 1, Lecture 2 - Formatting User interfaces with HTML
-            <ModulesControls />
+            <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
             <ListGroupItem className="wd-lesson p-3 ps-1">

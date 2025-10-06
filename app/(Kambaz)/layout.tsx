@@ -37,7 +37,7 @@ export default function KambazLayout({ children }: Readonly<{ children: ReactNod
   return (
     <>
       <KambazNavigation />
-      <div id="wd-kambaz" style={{ marginLeft: "120px" }}>
+      <div id="wd-kambaz" style={{ marginLeft: "100px" }}>
         <div className="d-flex">
           <div className="p-3 ps-md-5 flex-fill">
             {children}

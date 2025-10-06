@@ -27,25 +27,25 @@ export default function CourseStatus() {
         </div>
       </div>
       <br />
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <BiImport className="me-2 fs-5" /> Import Existing Content
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <LiaFileImportSolid className="me-2 fs-5" /> Import from Commons
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <AiFillHome className="me-2 fs-5" /> Choose Home Page
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <FaStream className="me-2 fs-5" /> View Course Stream
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <TfiAnnouncement className="me-2 fs-5" /> New Announcement
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <IoAnalytics className="me-2 fs-5" /> New Analytics
       </Button>
-      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+      <Button variant="secondary" size="lg" className="w-100 mt-1 text-start bg-light text-dark border-0">
         <AiOutlineNotification className="me-2 fs-5" /> View Course Notifications
       </Button>
     </div>

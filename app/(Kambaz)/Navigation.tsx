@@ -1,92 +1,61 @@
-// import Link from "next/link";
-// export default function KanbasNavigation() {
-//   return (
-//     <div id="wd-kanbas-navigation">
-//       <a href="https://www.northeastern.edu/" id="wd-neu-link" target="_blank">Northeastern</a><br/>
-//       • <Link href="/Account" id="wd-account-link">Account</Link><br/>
-//       • <Link href="/Dashboard" id="wd-dashboard-link">Dashboard</Link><br/>
-//       • <Link href="/Courses" id="wd-course-link">Courses</Link><br/>
-//       • <Link href="/Calendar" id="wd-calendar-link">Calendar</Link><br/>
-//       • <Link href="/Inbox" id="wd-inbox-link">Inbox</Link><br/>
-//       • <Link href="/Labs" id="wd-labs-link">Labs</Link><br/>
-//     </div>
-//   );
-// }
-
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
-import { ListGroup, ListGroupItem } from "react-bootstrap";
 import Link from "next/link";
 
 export default function KambazNavigation() {
   return (
-    <ListGroup id="wd-kambaz-navigation" style={{ width: 120 }}
-         className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2">
-      <ListGroupItem 
-        className="bg-black border-0 text-center" 
-        as="a"
-        target="_blank" 
+    <div 
+      className="position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2 d-flex flex-column align-items-center py-3"
+      style={{ width: "110px" }}
+      id="wd-kambaz-navigation"
+    >
+      <a 
         href="https://www.northeastern.edu/" 
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mb-4 d-block text-center"
         id="wd-neu-link"
       >
-        <img src="/images/NEU.svg" width="75px" alt="Northeastern University" />
-      </ListGroupItem>
-      <br />
+        <img src="/images/NU_logo.png" width="75px" alt="Northeastern University" />
+      </a>
       
-      <ListGroupItem className="border-0 bg-black text-center">
-        <Link href="/Account" id="wd-account-link" className="text-white text-decoration-none">
-          <FaRegCircleUser className="fs-1 text-white" />
-          <br />
-          Account
-        </Link>
-      </ListGroupItem>
-      <br />
+      <Link href="/Account/Signin" id="wd-account-link" 
+        className="text-white text-decoration-none text-center mb-4 d-block py-2">
+        <FaRegCircleUser className="fs-1 d-block mx-auto mb-1" />
+        <div style={{ fontSize: "13px" }}>Account</div>
+      </Link>
       
-      <ListGroupItem className="border-0 bg-white text-center">
-        <Link href="/Dashboard" id="wd-dashboard-link" className="text-danger text-decoration-none">
-          <AiOutlineDashboard className="fs-1 text-danger" />
-          <br />
-          Dashboard
-        </Link>
-      </ListGroupItem>
-      <br />
+      <Link href="/Dashboard" id="wd-dashboard-link" 
+        className="bg-white text-decoration-none text-center mb-4 d-block py-2 rounded">
+        <AiOutlineDashboard className="fs-1 text-danger d-block mx-auto mb-1" />
+        <div className="text-dark" style={{ fontSize: "13px" }}>Dashboard</div>
+      </Link>
       
-      <ListGroupItem className="border-0 bg-black text-center">
-        <Link href="/Courses" id="wd-course-link" className="text-white text-decoration-none">
-          <LiaBookSolid className="fs-1 text-white" />
-          <br />
-          Courses
-        </Link>
-      </ListGroupItem>
-      <br />
+      <Link href="/Courses/1234/Home" id="wd-course-link" 
+        className="text-white text-decoration-none text-center mb-4 d-block py-2">
+        <LiaBookSolid className="fs-1 text-danger d-block mx-auto mb-1" />
+        <div style={{ fontSize: "13px" }}>Courses</div>
+      </Link>
       
-      <ListGroupItem className="border-0 bg-black text-center">
-        <Link href="/Calendar" id="wd-calendar-link" className="text-white text-decoration-none">
-          <IoCalendarOutline className="fs-1 text-white" />
-          <br />
-          Calendar
-        </Link>
-      </ListGroupItem>
-      <br />
+      <Link href="/Calendar" id="wd-calendar-link" 
+        className="text-white text-decoration-none text-center mb-4 d-block py-2">
+        <IoCalendarOutline className="fs-1 text-danger d-block mx-auto mb-1" />
+        <div style={{ fontSize: "13px" }}>Calendar</div>
+      </Link>
       
-      <ListGroupItem className="border-0 bg-black text-center">
-        <Link href="/Inbox" id="wd-inbox-link" className="text-white text-decoration-none">
-          <FaInbox className="fs-1 text-white" />
-          <br />
-          Inbox
-        </Link>
-      </ListGroupItem>
-      <br />
+      <Link href="/Inbox" id="wd-inbox-link" 
+        className="text-white text-decoration-none text-center mb-4 d-block py-2">
+        <FaInbox className="fs-1 text-danger d-block mx-auto mb-1" />
+        <div style={{ fontSize: "13px" }}>Inbox</div>
+      </Link>
       
-      <ListGroupItem className="border-0 bg-black text-center">
-        <Link href="/Labs" id="wd-labs-link" className="text-white text-decoration-none">
-          <LiaCogSolid className="fs-1 text-white" />
-          <br />
-          Labs
-        </Link>
-      </ListGroupItem>
-    </ListGroup>
+      <Link href="/Labs" id="wd-labs-link" 
+        className="text-white text-decoration-none text-center mb-4 d-block py-2">
+        <LiaCogSolid className="fs-1 text-danger d-block mx-auto mb-1" />
+        <div style={{ fontSize: "13px" }}>Labs</div>
+      </Link>
+    </div>
   );
 }

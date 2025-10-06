@@ -3,6 +3,13 @@ import Link from "next/link";
 export default function CourseNavigation() {
   return (
     <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
+      <style>{`
+        .wd.list-group > .list-group-item.active {
+          color: black !important;
+          background-color: white !important;
+          border-left: 3px solid black !important;
+        }
+      `}</style>
       <Link href="/Courses/1234/Home" id="wd-course-home-link"
         className="list-group-item active border-0">
         Home
