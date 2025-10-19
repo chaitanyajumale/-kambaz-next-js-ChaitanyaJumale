@@ -1,7 +1,14 @@
+"use client"
+
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
+import { useParams } from "next/navigation";
+import * as db from "../../../../Database";
+
 
 export default function PeopleTable() {
+  const { cid } = useParams();
+  const { users, enrollments } = db;
   return (
     <div id="wd-people-table">
       <Table striped>
