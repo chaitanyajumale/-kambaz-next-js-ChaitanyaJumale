@@ -1,57 +1,28 @@
-// import { ReactNode } from "react";
-// import CourseNavigation from "./Navigation";
-// export default async function CoursesLayout(
-//   { children, params }: {
-//   children: ReactNode;
-//   params: { cid: string };  
-//   })  {
-//  const { cid } =  params;
-//  return (
-//    <div id="wd-courses">
-//      <h2>Courses {cid}</h2>
-//      <hr />
-//      <table>
-//        <tbody>
-//          <tr>
-//            <td valign="top" width="200"> <CourseNavigation /> </td>
-//            <td valign="top" width="100%"> {children} </td>
-//          </tr>
-//        </tbody>
-//      </table>
-//    </div>
-// );}
-
-// import { ReactNode } from "react";
-// import CourseNavigation from "./Navigation";
-// export default async function CoursesLayout(
-//   { children, params }: Readonly<{ children: ReactNode; params: Promise<{ cid: string }> }>) {
-//  const { cid } = await params;
-//  return (
-//    <div id="wd-courses">
-//      <h2>Courses {cid}</h2>
-//      <hr />
-//      <table>
-//        <tbody>
-//          <tr>
-//            <td valign="top" width="200"> <CourseNavigation/> </td>
-//            <td valign="top" width="100%"> {children} </td>
-//          </tr>
-//        </tbody>
-//      </table>
-//    </div>
-// );}
-
+"use client";
 import { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
 import { FaAlignJustify } from "react-icons/fa";
-import { courses } from "../../Database";
-import Breadcrumb from "./Breadcrumb"; 
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
+import { RootState } from "../../store";
+import Breadcrumb from "./Breadcrumb";
 
-export default async function CoursesLayout(
-  { children, params }: Readonly<{ children: ReactNode; params: Promise<{ cid: string }> }>) {
-  const { cid } = await params;
-  const course = courses.find((course) => course._id === cid);
-  
+// Define the Course interface
+interface Course {
+  _id: string;
+  name: string;
+  number: string;
+  startDate: string;
+  endDate: string;
+  image?: string;
+  description: string;
+}
+
+export default function CoursesLayout({ children }: { children: ReactNode }) {
+  const { cid } = useParams();
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
+  const course = courses.find((course: Course) => course._id === cid);
+
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
@@ -70,4 +41,3 @@ export default async function CoursesLayout(
     </div>
   );
 }
-

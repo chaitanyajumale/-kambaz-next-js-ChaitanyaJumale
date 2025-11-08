@@ -30,12 +30,35 @@
 //   );
 // }
 
+// import { ReactNode } from "react";
+// import KambazNavigation from "./Navigation";
+
+// export default function KambazLayout({ children }: Readonly<{ children: ReactNode }>) {
+//   return (
+//     <>
+//       <KambazNavigation />
+//       <div id="wd-kambaz" style={{ marginLeft: "100px" }}>
+//         <div className="d-flex">
+//           <div className="p-3 ps-md-5 flex-fill">
+//             {children}
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+"use client";
 import { ReactNode } from "react";
 import KambazNavigation from "./Navigation";
+import { Provider } from "react-redux";
+import store from "./store";
 
-export default function KambazLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function KambazLayout({ 
+  children 
+}: Readonly<{ children: ReactNode }>) {
   return (
-    <>
+    <Provider store={store}>
       <KambazNavigation />
       <div id="wd-kambaz" style={{ marginLeft: "100px" }}>
         <div className="d-flex">
@@ -44,6 +67,6 @@ export default function KambazLayout({ children }: Readonly<{ children: ReactNod
           </div>
         </div>
       </div>
-    </>
+    </Provider>
   );
 }

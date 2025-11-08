@@ -1,34 +1,85 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { setCurrentUser } from "../reducer";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import * as db from "../../Database";
 import { FormControl, Button } from "react-bootstrap";
 
+// Define User interface
+interface User {
+  _id: string;
+  username: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  dob?: string;
+  role?: string;
+  loginId?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+}
+
+interface Credentials {
+  username: string;
+  password: string;
+}
+
 export default function Signin() {
+  const [credentials, setCredentials] = useState<Credentials>({
+    username: "",
+    password: ""
+  });
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const signin = () => {
+    const user = db.users.find(
+      (u: User) =>
+        u.username === credentials.username &&
+        u.password === credentials.password
+    );
+    
+    if (!user) {
+      alert("Invalid credentials");
+      return;
+    }
+    
+    dispatch(setCurrentUser(user));
+    router.push("/Dashboard");
+  };
+
   return (
     <div id="wd-signin-screen" className="p-4" style={{ maxWidth: "400px" }}>
-      <h3>Signin</h3>
-      <FormControl 
-        id="wd-username"
-        placeholder="username"
+      <h3>Sign in</h3>
+      <FormControl
+        value={credentials.username}
+        onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
         className="mb-2"
+        placeholder="username"
+        id="wd-username"
       />
-      <FormControl 
-        id="wd-password"
-        placeholder="password" 
+      <FormControl
+        value={credentials.password}
+        onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+        className="mb-2"
+        placeholder="password"
         type="password"
-        className="mb-3"
+        id="wd-password"
       />
-      <Link href="/Dashboard" className="text-decoration-none">
-        <Button 
-          id="wd-signin-btn"
-          variant="primary" 
-          className="w-100 mb-2"
-        >
-          Signin
-        </Button>
-      </Link>
-      <Link href="/Account/Signup" id="wd-signup-link">
-        Signup
+      <Button 
+        onClick={signin} 
+        id="wd-signin-btn" 
+        variant="primary"
+        className="w-100 mb-2"
+      >
+        Sign in
+      </Button>
+      <Link id="wd-signup-link" href="/Account/Signup">
+        Sign up
       </Link>
     </div>
   );

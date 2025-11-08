@@ -1,6 +1,22 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+
+interface User {
+  _id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+}
 
 export default function AccountNavigation() {
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer) as { currentUser: User | null };
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+  const pathname = usePathname();
+
   return (
     <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
       <style>{`
@@ -10,18 +26,19 @@ export default function AccountNavigation() {
           border-left: 3px solid black !important;
         }
       `}</style>
-      <Link href="/Account/Signin" id="wd-account-signin-link"
-        className="list-group-item active border-0">
-        Signin
-      </Link>
-      <Link href="/Account/Signup" id="wd-account-signup-link"
-        className="list-group-item text-danger border-0">
-        Signup
-      </Link>
-      <Link href="/Account/Profile" id="wd-account-profile-link"
-        className="list-group-item text-danger border-0">
-        Profile
-      </Link>
+      
+      {links.map((link) => (
+        <Link 
+          key={link}
+          href={`/Account/${link}`} 
+          id={`wd-account-${link.toLowerCase()}-link`}
+          className={`list-group-item border-0 ${
+            pathname.includes(link.toLowerCase()) ? 'active' : 'text-danger'
+          }`}
+        >
+          {link}
+        </Link>
+      ))}
     </div>
   );
 }
