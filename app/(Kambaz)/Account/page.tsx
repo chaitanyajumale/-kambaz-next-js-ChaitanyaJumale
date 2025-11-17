@@ -25,6 +25,5 @@ export default function AccountPage() {
     }
   }, [currentUser, router]);
 
-  // Return null or a loading state while redirecting
   return null;
 }

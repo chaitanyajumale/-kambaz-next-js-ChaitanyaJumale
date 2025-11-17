@@ -5,62 +5,64 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { RootState } from "../../store";
 import { Button, FormControl } from "react-bootstrap";
-
-interface User {
-  _id: string;
-  username: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-  dob?: string;
-  email?: string;
-  role?: string;
-}
+import * as client from "../client";
 
 export default function Profile() {
-  const [profile, setProfile] = useState<User | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [profile, setProfile] = useState<any>({});
   const dispatch = useDispatch();
   const router = useRouter();
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer) as { currentUser: User | null };
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+
+  const checkSession = async () => {
+    try {
+      const sessionUser = await client.profile();
+      if (sessionUser) {
+        dispatch(setCurrentUser(sessionUser));
+        setProfile(sessionUser);
+      }
+    } catch (error) {
+      router.push("/Account/Signin");
+    }
+  };
 
   useEffect(() => {
     if (!currentUser) {
-      router.push("/Account/Signin");
+      checkSession();
     } else {
       setProfile(currentUser);
     }
-  }, [currentUser, router]);
+  }, []);
 
-  const signout = () => {
+  const updateProfile = async () => {
+    const updatedProfile = await client.updateUser(profile);
+    dispatch(setCurrentUser(updatedProfile));
+  };
+
+  const signout = async () => {
+    await client.signout();
     dispatch(setCurrentUser(null));
     router.push("/Account/Signin");
   };
 
-  const updateProfile = () => {
-    if (profile) {
-      dispatch(setCurrentUser(profile));
-      alert("Profile updated successfully!");
-    }
-  };
-
-  if (!profile) {
+  if (!profile._id) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="wd-profile-screen p-4" style={{ maxWidth: "400px" }}>
+    <div id="wd-profile-screen" className="p-4" style={{ maxWidth: "400px" }}>
       <h3>Profile</h3>
       <FormControl 
         id="wd-username" 
         className="mb-2"
-        value={profile.username}
+        value={profile.username || ""}
         placeholder="username"
         onChange={(e) => setProfile({ ...profile, username: e.target.value })}
       />
       <FormControl 
         id="wd-password" 
         className="mb-2"
-        value={profile.password}
+        value={profile.password || ""}
         placeholder="password"
         type="password"
         onChange={(e) => setProfile({ ...profile, password: e.target.value })}
@@ -113,7 +115,7 @@ export default function Profile() {
         variant="primary"
         id="wd-update-btn"
       >
-        Update Profile
+        Update
       </Button>
       
       <Button 

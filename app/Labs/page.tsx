@@ -6,6 +6,8 @@ export default function Labs() {
     <h2>Name : Chaitanya Jumale</h2>
     <h2>Course: CS5610 18616 202610 Web Development</h2>
     <h2>Offline Class</h2>
+    <h2>User Credentials: iron_man/ stark123</h2>
+    
     <a href="https://github.com/chaitanyajumale/-kambaz-next-js-ChaitanyaJumale">Github Link</a><br/>
       
      <h1>Labs</h1>
@@ -25,6 +27,10 @@ export default function Labs() {
         <li>
          <Link href="/Labs/Lab4" id="wd-lab4-link">
            Lab 4: Passing values </Link>
+       </li>
+        <li>
+          <Link href="/Labs/Lab5" id="wd-lab4-link">
+           Lab 5: Express JS </Link>
        </li>
      </ul>
    </div>

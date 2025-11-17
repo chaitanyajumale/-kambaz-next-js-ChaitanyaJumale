@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSearch, FaPlus, FaCaretDown, FaGripVertical, FaTrash } from "react-icons/fa";
@@ -9,10 +8,10 @@ import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { MdEditNote } from "react-icons/md";
 import { Button, InputGroup, FormControl, Modal } from "react-bootstrap";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "../Assignments/reducer";
-import { useState } from "react";
+import { setAssignments, deleteAssignment } from "../Assignments/reducer";
+import { useState, useEffect } from "react";
+import * as client from "../../client";
 
-// Define types based on your actual data structure
 interface Assignment {
   _id: string;
   title: string;
@@ -31,23 +30,42 @@ export default function Assignments() {
   const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
-  
-  // Filter assignments for the current course
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const assignmentsData = await client.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignmentsData));
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      }
+    };
+    
+    if (cid) {
+      fetchAssignments();
+    }
+  }, [cid, dispatch]);
+
   const courseAssignments = assignments.filter(
     (assignment: Assignment) => assignment.course === cid
   );
-  
-  // Calculate percentage of total
-  const percentageOfTotal = "40%"; // Static value as shown in your UI
+
+  const percentageOfTotal = "40%"; 
 
   const handleDeleteClick = (assignmentId: string) => {
     setAssignmentToDelete(assignmentId);
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (assignmentToDelete) {
-      dispatch(deleteAssignment(assignmentToDelete));
+      try {
+        await client.deleteAssignment(assignmentToDelete);
+        dispatch(deleteAssignment(assignmentToDelete));
+      } catch (error) {
+        console.error("Error deleting assignment:", error);
+        alert("Failed to delete assignment. Please try again.");
+      }
     }
     setShowDeleteModal(false);
     setAssignmentToDelete(null);
@@ -68,7 +86,6 @@ export default function Assignments() {
   
   return (
     <div id="wd-assignments" className="p-3">
-      {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={cancelDelete}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
@@ -86,7 +103,6 @@ export default function Assignments() {
         </Modal.Footer>
       </Modal>
 
-      {/* Search and Button Controls */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <InputGroup style={{ width: "300px" }}>
           <InputGroup.Text className="bg-white">
@@ -109,7 +125,6 @@ export default function Assignments() {
         </div>
       </div>
 
-      {/* Assignments Section */}
       <div className="border rounded-0">
         <div className="bg-light p-3 d-flex justify-content-between align-items-center border-bottom">
           <h5 className="mb-0 d-flex align-items-center">

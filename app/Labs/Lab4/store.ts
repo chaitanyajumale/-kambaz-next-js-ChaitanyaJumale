@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import helloReducer from "./ReduxExamples/HelloRedux/helloReducer";
 import counterReducer from "./ReduxExamples/CounterRedux/counterReducer";
 import addReducer from "./ReduxExamples/AddRedux/addReducer";
-import TodoList from "./ReduxExamples/todos/TodoList";
+// import TodoList from "./ReduxExamples/todos/TodoList";
 import todosReducer from "./ReduxExamples/todos/todosReducer";
 
 const store = configureStore({

@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { courses } from "../Database";
 import { v4 as uuidv4 } from "uuid";
 
-// Define the Course interface
 interface Course {
   _id: string;
   name: string;
@@ -13,23 +11,27 @@ interface Course {
   description: string;
 }
 
-// Define the state interface
 interface CoursesState {
   courses: Course[];
 }
 
-// Initial state with proper typing
 const initialState: CoursesState = {
-  courses: courses,
+  courses: [],
 };
 
 const coursesSlice = createSlice({
   name: "courses",
   initialState,
   reducers: {
+    setCourses: (state, action: PayloadAction<Course[]>) => {
+      state.courses = action.payload;
+    },
     addNewCourse: (state, action: PayloadAction<Course>) => {
-      const newCourse = { ...action.payload, _id: uuidv4() };
-      state.courses = [...state.courses, newCourse];
+      const newCourse: Course = {
+        ...action.payload,
+        _id: uuidv4(),
+      };
+      state.courses.push(newCourse);
     },
     deleteCourse: (state, action: PayloadAction<string>) => {
       state.courses = state.courses.filter(
@@ -37,16 +39,13 @@ const coursesSlice = createSlice({
       );
     },
     updateCourse: (state, action: PayloadAction<Course>) => {
-      state.courses = state.courses.map((c) =>
-        c._id === action.payload._id ? action.payload : c
+      state.courses = state.courses.map((course) =>
+        course._id === action.payload._id ? action.payload : course
       );
-    },
-    setCourses: (state, action: PayloadAction<Course[]>) => {
-      state.courses = action.payload;
     },
   },
 });
 
-export const { addNewCourse, deleteCourse, updateCourse, setCourses } =
+export const { setCourses, addNewCourse, deleteCourse, updateCourse } =
   coursesSlice.actions;
 export default coursesSlice.reducer;

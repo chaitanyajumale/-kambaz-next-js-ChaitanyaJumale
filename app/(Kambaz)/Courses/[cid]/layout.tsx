@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 import { RootState } from "../../store";
 import Breadcrumb from "./Breadcrumb";
 
-// Define the Course interface
 interface Course {
   _id: string;
   name: string;

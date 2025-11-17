@@ -2,279 +2,339 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Form, Button, Row, Col, Card } from "react-bootstrap";
-import { RootState } from "../../../../store";
+import { useDispatch } from "react-redux";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import * as client from "../../../client";
 import { addAssignment, updateAssignment } from "../reducer";
 
-interface Assignment {
-  _id: string;
+interface AssignmentData {
+  _id?: string;
   title: string;
   course: string;
-  description?: string;
-  points?: number;
-  dueDate?: string;
-  availableFromDate?: string;
-  availableUntilDate?: string;
+  description: string;
+  points: number;
+  dueDate: string;
+  availableFromDate: string;
+  availableUntilDate: string;
+  assignmentGroup?: string;
+  displayGradeAs?: string;
+  submissionType?: string;
+  onlineEntryOptions?: string[];
+  assignTo?: string;
 }
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
+  const isNewAssignment = aid === "new";
   
-  const isNewAssignment = aid === 'new';
-  
-  // Find the specific assignment if editing
-  const existingAssignment = !isNewAssignment 
-    ? assignments.find((a: Assignment) => a._id === aid && a.course === cid)
-    : null;
-  
-  // Initialize form state
-  const [formData, setFormData] = useState<Omit<Assignment, '_id'>>({
-    title: existingAssignment?.title || "New Assignment",
+  const [assignment, setAssignment] = useState<AssignmentData>({
+    title: "Propulsion Assignment",
     course: cid as string,
-    description: existingAssignment?.description || `The assignment is available online
-
-Submit a link to the landing page of your Web application running on Netlify.
-
-The landing page should include the following:
-• Your full name and section
-• Links to each of the lab assignments
-• Link to the Kanbas application
-• Links to all relevant source code repositories
-
-The Kanbas application should include a link to navigate back to the landing page.`,
-    points: existingAssignment?.points || 100,
-    dueDate: existingAssignment?.dueDate || "2024-05-13T23:59",
-    availableFromDate: existingAssignment?.availableFromDate || "2024-05-06",
-    availableUntilDate: existingAssignment?.availableUntilDate || "",
+    description: "Submit a detailed analysis of propulsion mechanisms used in liquid rocket engines.",
+    points: 100,
+    dueDate: "2025-05-11T23:59",
+    availableFromDate: "2025-10-20T00:00",
+    availableUntilDate: "2025-12-01T23:59",
+    assignmentGroup: "ASSIGNMENTS",
+    displayGradeAs: "Percentage",
+    submissionType: "Online",
+    onlineEntryOptions: ["Website URL", "File Uploads"],
+    assignTo: "Everyone",
   });
+  
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
-    if (isNewAssignment) {
-      dispatch(addAssignment(formData));
-    } else if (existingAssignment) {
-      dispatch(updateAssignment({
-        ...formData,
-        _id: existingAssignment._id,
-      }));
+  // Fetch existing assignment if editing
+  useEffect(() => {
+    const fetchAssignment = async () => {
+      if (!isNewAssignment && aid) {
+        try {
+          setLoading(true);
+          const data = await client.findAssignmentById(aid as string);
+          setAssignment(data);
+        } catch (error) {
+          console.error("Error fetching assignment:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    fetchAssignment();
+  }, [aid, isNewAssignment]);
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      
+      if (isNewAssignment) {
+        const newAssignment = await client.createAssignmentForCourse(
+          cid as string,
+          assignment
+        );
+        dispatch(addAssignment(newAssignment));
+      } else {
+        const updatedAssignment = await client.updateAssignment(assignment);
+        dispatch(updateAssignment(updatedAssignment));
+      }
+      
+      router.push(`/Courses/${cid}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+      alert("Failed to save assignment. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    router.push(`/Courses/${cid}/Assignments`);
   };
 
   const handleCancel = () => {
     router.push(`/Courses/${cid}/Assignments`);
   };
-  
-  if (!isNewAssignment && !existingAssignment) {
-    return (
-      <div className="p-3">
-        <h3>Assignment not found</h3>
-        <Button variant="secondary" onClick={handleCancel}>
-          Back to Assignments
-        </Button>
-      </div>
-    );
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this assignment?")) {
+      try {
+        if (assignment._id) {
+          await client.deleteAssignment(assignment._id);
+          router.push(`/Courses/${cid}/Assignments`);
+        }
+      } catch (error) {
+        console.error("Error deleting assignment:", error);
+      }
+    }
+  };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChange = (field: keyof AssignmentData, value: any) => {
+    setAssignment(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCheckboxChange = (option: string) => {
+    const currentOptions = assignment.onlineEntryOptions || [];
+    if (currentOptions.includes(option)) {
+      handleChange("onlineEntryOptions", currentOptions.filter(o => o !== option));
+    } else {
+      handleChange("onlineEntryOptions", [...currentOptions, option]);
+    }
+  };
+
+  if (loading && !isNewAssignment) {
+    return <div className="p-4">Loading...</div>;
   }
-  
+
   return (
-    <div id="wd-assignments-editor" className="p-3">
+    <Container fluid className="p-4" style={{ maxWidth: "800px", marginLeft: 0 }}>
       <Form>
-        <Form.Group className="mb-4">
-          <Form.Label htmlFor="wd-name">Assignment Name</Form.Label>
-          <Form.Control 
-            id="wd-name" 
+        <Form.Group className="mb-3">
+          <Form.Label><strong>Assignment Name</strong></Form.Label>
+          <Form.Control
             type="text"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            size="lg"
+            value={assignment.title}
+            onChange={(e) => handleChange("title", e.target.value)}
+            style={{ fontSize: "14px" }}
           />
         </Form.Group>
 
         <Form.Group className="mb-4">
-          <Form.Control 
-            id="wd-description"
+          <Form.Control
             as="textarea"
-            rows={10}
-            style={{ lineHeight: "1.6", fontFamily: "inherit" }}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            rows={4}
+            value={assignment.description}
+            onChange={(e) => handleChange("description", e.target.value)}
+            style={{ fontSize: "14px" }}
           />
         </Form.Group>
 
+        {/* Points */}
         <Row className="mb-3">
-          <Form.Group as={Col} md={6}>
-            <Row className="align-items-center mb-3">
-              <Col sm={4} className="text-end">
-                <Form.Label htmlFor="wd-points">Points</Form.Label>
-              </Col>
-              <Col sm={8}>
-                <Form.Control 
-                  id="wd-points" 
-                  type="number" 
-                  value={formData.points}
-                  onChange={(e) => setFormData({ ...formData, points: parseInt(e.target.value) || 0 })}
-                />
-              </Col>
-            </Row>
-
-            <Row className="align-items-center mb-3">
-              <Col sm={4} className="text-end">
-                <Form.Label htmlFor="wd-group">Assignment Group</Form.Label>
-              </Col>
-              <Col sm={8}>
-                <Form.Select id="wd-group" defaultValue="ASSIGNMENTS">
-                  <option value="ASSIGNMENTS">ASSIGNMENTS</option>
-                  <option value="QUIZZES">QUIZZES</option>
-                  <option value="EXAMS">EXAMS</option>
-                  <option value="PROJECT">PROJECT</option>
-                </Form.Select>
-              </Col>
-            </Row>
-
-            <Row className="align-items-center mb-3">
-              <Col sm={4} className="text-end">
-                <Form.Label htmlFor="wd-display-grade-as">Display Grade as</Form.Label>
-              </Col>
-              <Col sm={8}>
-                <Form.Select id="wd-display-grade-as" defaultValue="Percentage">
-                  <option value="Percentage">Percentage</option>
-                  <option value="Points">Points</option>
-                  <option value="Complete/Incomplete">Complete/Incomplete</option>
-                  <option value="Letter Grade">Letter Grade</option>
-                </Form.Select>
-              </Col>
-            </Row>
-          </Form.Group>
+          <Col md={6}>
+            <Form.Label><strong>Points</strong></Form.Label>
+            <Form.Control
+              type="number"
+              value={assignment.points}
+              onChange={(e) => handleChange("points", parseInt(e.target.value) || 0)}
+              min="0"
+              style={{ fontSize: "14px" }}
+            />
+          </Col>
         </Row>
 
+        {/* Assignment Group */}
         <Row className="mb-3">
-          <Form.Group as={Col} md={6}>
-            <Row className="align-items-start mb-3">
-              <Col sm={4} className="text-end">
-                <Form.Label>Submission Type</Form.Label>
-              </Col>
-              <Col sm={8}>
-                <Card className="p-3">
-                  <Form.Select id="wd-submission-type" defaultValue="Online" className="mb-3">
-                    <option value="Online">Online</option>
-                    <option value="On Paper">On Paper</option>
-                    <option value="No Submission">No Submission</option>
-                  </Form.Select>
-                  
-                  <div>
-                    <Form.Label className="fw-bold">Online Entry Options</Form.Label>
-                    <Form.Check 
-                      type="checkbox" 
-                      id="wd-text-entry"
-                      label="Text Entry"
-                    />
-                    <Form.Check 
-                      type="checkbox" 
-                      id="wd-website-url"
-                      label="Website URL"
-                      defaultChecked={true}
-                    />
-                    <Form.Check 
-                      type="checkbox" 
-                      id="wd-media-recordings"
-                      label="Media Recordings"
-                    />
-                    <Form.Check 
-                      type="checkbox" 
-                      id="wd-student-annotation"
-                      label="Student Annotation"
-                    />
-                    <Form.Check 
-                      type="checkbox" 
-                      id="wd-file-upload"
-                      label="File Uploads"
-                    />
-                  </div>
-                </Card>
-              </Col>
-            </Row>
-          </Form.Group>
+          <Col md={6}>
+            <Form.Label><strong>Assignment Group</strong></Form.Label>
+            <Form.Select
+              value={assignment.assignmentGroup}
+              onChange={(e) => handleChange("assignmentGroup", e.target.value)}
+              style={{ fontSize: "14px" }}
+            >
+              <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+              <option value="QUIZZES">QUIZZES</option>
+              <option value="EXAMS">EXAMS</option>
+              <option value="PROJECT">PROJECT</option>
+            </Form.Select>
+          </Col>
         </Row>
 
+        {/* Display Grade as */}
         <Row className="mb-3">
-          <Form.Group as={Col} md={6}>
-            <Row className="align-items-start mb-3">
-              <Col sm={4} className="text-end">
-                <Form.Label>Assign</Form.Label>
-              </Col>
-              <Col sm={8}>
-                <Card className="p-3">
-                  <Form.Group className="mb-3">
-                    <Form.Label htmlFor="wd-assign-to">Assign to</Form.Label>
-                    <Form.Control 
-                      id="wd-assign-to" 
-                      type="text"
-                      defaultValue="Everyone"
-                      className="mb-3"
-                    />
-                    <button 
-                      type="button" 
-                      className="btn btn-sm position-absolute"
-                      style={{ right: '25px', top: '45px' }}
-                    >
-                      ×
-                    </button>
-                  </Form.Group>
-
-                  <Form.Group className="mb-3">
-                    <Form.Label htmlFor="wd-due-date">Due</Form.Label>
-                    <Form.Control 
-                      id="wd-due-date" 
-                      type="datetime-local" 
-                      value={formData.dueDate}
-                      onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                    />
-                  </Form.Group>
-
-                  <Row>
-                    <Col>
-                      <Form.Group>
-                        <Form.Label htmlFor="wd-available-from">Available from</Form.Label>
-                        <Form.Control 
-                          id="wd-available-from" 
-                          type="date" 
-                          value={formData.availableFromDate}
-                          onChange={(e) => setFormData({ ...formData, availableFromDate: e.target.value })}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col>
-                      <Form.Group>
-                        <Form.Label htmlFor="wd-available-until">Until</Form.Label>
-                        <Form.Control 
-                          id="wd-available-until" 
-                          type="date" 
-                          value={formData.availableUntilDate}
-                          onChange={(e) => setFormData({ ...formData, availableUntilDate: e.target.value })}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-            </Row>
-          </Form.Group>
+          <Col md={6}>
+            <Form.Label><strong>Display Grade as</strong></Form.Label>
+            <Form.Select
+              value={assignment.displayGradeAs}
+              onChange={(e) => handleChange("displayGradeAs", e.target.value)}
+              style={{ fontSize: "14px" }}
+            >
+              <option value="Percentage">Percentage</option>
+              <option value="Points">Points</option>
+              <option value="Complete/Incomplete">Complete/Incomplete</option>
+              <option value="Letter Grade">Letter Grade</option>
+              <option value="GPA Scale">GPA Scale</option>
+            </Form.Select>
+          </Col>
         </Row>
 
-        <hr className="my-4" />
+        {/* Submission Type */}
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Label><strong>Submission Type</strong></Form.Label>
+            <Form.Select
+              value={assignment.submissionType}
+              onChange={(e) => handleChange("submissionType", e.target.value)}
+              style={{ fontSize: "14px" }}
+            >
+              <option value="Online">Online</option>
+              <option value="On Paper">On Paper</option>
+              <option value="No Submission">No Submission</option>
+              <option value="External Tool">External Tool</option>
+            </Form.Select>
+          </Col>
+        </Row>
+        
+        {assignment.submissionType === "Online" && (
+          <div className="mb-4 p-3 border rounded">
+            <h6><strong>Online Entry Options</strong></h6>
+            <Form.Check
+              type="checkbox"
+              label="Text Entry"
+              checked={assignment.onlineEntryOptions?.includes("Text Entry") || false}
+              onChange={() => handleCheckboxChange("Text Entry")}
+              className="mb-2"
+            />
+            <Form.Check
+              type="checkbox"
+              label="Website URL"
+              checked={assignment.onlineEntryOptions?.includes("Website URL") || false}
+              onChange={() => handleCheckboxChange("Website URL")}
+              className="mb-2"
+            />
+            <Form.Check
+              type="checkbox"
+              label="Media Recordings"
+              checked={assignment.onlineEntryOptions?.includes("Media Recordings") || false}
+              onChange={() => handleCheckboxChange("Media Recordings")}
+              className="mb-2"
+            />
+            <Form.Check
+              type="checkbox"
+              label="Student Annotation"
+              checked={assignment.onlineEntryOptions?.includes("Student Annotation") || false}
+              onChange={() => handleCheckboxChange("Student Annotation")}
+              className="mb-2"
+            />
+            <Form.Check
+              type="checkbox"
+              label="File Uploads"
+              checked={assignment.onlineEntryOptions?.includes("File Uploads") || false}
+              onChange={() => handleCheckboxChange("File Uploads")}
+            />
+          </div>
+        )}
 
-        <div className="d-flex justify-content-end">
-          <Button variant="secondary" className="me-2" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleSave}>
-            Save
+        {/* Assign */}
+        <Row className="mb-3">
+          <Col md={12}>
+            <Form.Label><strong>Assign to</strong></Form.Label>
+            <Form.Control
+              type="text"
+              value={assignment.assignTo}
+              onChange={(e) => handleChange("assignTo", e.target.value)}
+              style={{ fontSize: "14px" }}
+            />
+          </Col>
+        </Row>
+
+        {/* Due Date */}
+        <Row className="mb-3">
+          <Col md={12}>
+            <Form.Label><strong>Due</strong></Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={assignment.dueDate}
+              onChange={(e) => handleChange("dueDate", e.target.value)}
+              style={{ fontSize: "14px" }}
+            />
+          </Col>
+        </Row>
+
+        {/* Available From and Until */}
+        <Row className="mb-4">
+          <Col md={6}>
+            <Form.Label><strong>Available from</strong></Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={assignment.availableFromDate}
+              onChange={(e) => handleChange("availableFromDate", e.target.value)}
+              style={{ fontSize: "14px" }}
+            />
+          </Col>
+          <Col md={6}>
+            <Form.Label><strong>Until</strong></Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={assignment.availableUntilDate}
+              onChange={(e) => handleChange("availableUntilDate", e.target.value)}
+              style={{ fontSize: "14px" }}
+            />
+          </Col>
+        </Row>
+
+        {/* Buttons */}
+        <hr />
+        <div className="d-flex justify-content-between mt-3">
+          <div>
+            <Button 
+              variant="outline-secondary" 
+              onClick={handleCancel}
+              className="me-2"
+              style={{ borderRadius: "4px" }}
+            >
+              Cancel
+            </Button>
+            {!isNewAssignment && (
+              <Button 
+                variant="danger" 
+                onClick={handleDelete}
+                style={{ borderRadius: "4px" }}
+              >
+                Delete
+              </Button>
+            )}
+          </div>
+          <Button 
+            variant="danger" 
+            onClick={handleSave}
+            disabled={loading || !assignment.title}
+            style={{ borderRadius: "4px", backgroundColor: "#dc3545", borderColor: "#dc3545" }}
+          >
+            {loading ? "Saving..." : "Save"}
           </Button>
         </div>
       </Form>
-    </div>
+    </Container>
   );
 }

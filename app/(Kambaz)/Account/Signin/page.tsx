@@ -1,27 +1,12 @@
 "use client";
 
+import * as client from "../client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import * as db from "../../Database";
 import { FormControl, Button } from "react-bootstrap";
-
-// Define User interface
-interface User {
-  _id: string;
-  username: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  dob?: string;
-  role?: string;
-  loginId?: string;
-  lastActivity?: string;
-  totalActivity?: string;
-}
 
 interface Credentials {
   username: string;
@@ -36,20 +21,32 @@ export default function Signin() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const signin = () => {
-    const user = db.users.find(
-      (u: User) =>
-        u.username === credentials.username &&
-        u.password === credentials.password
-    );
+  const signin = async () => {
+    console.log("Signin clicked with credentials:", credentials.username);
     
-    if (!user) {
-      alert("Invalid credentials");
+    if (!credentials.username || !credentials.password) {
+      alert("Please enter username and password");
       return;
     }
     
-    dispatch(setCurrentUser(user));
-    router.push("/Dashboard");
+    try {
+      const user = await client.signin(credentials);
+      console.log("Signin successful, user:", user);
+      
+      dispatch(setCurrentUser(user));
+      router.push("/Dashboard");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Signin error:", error);
+      
+      if (error.response?.status === 401) {
+        alert("Invalid username or password");
+      } else if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("Sign in failed. Please check the console for details.");
+      }
+    }
   };
 
   return (
