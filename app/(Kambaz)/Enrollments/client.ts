@@ -4,7 +4,7 @@ const axiosWithCredentials = axios.create({
   withCredentials: true 
 });
 
-const REMOTE_SERVER = process.env.NEXT_PUBLIC_REMOTE_SERVER || "http://localhost:4000";
+const REMOTE_SERVER = process.env.NEXT_PUBLIC_REMOTE_SERVER;
 const ENROLLMENTS_API = `${REMOTE_SERVER}/api/enrollments`;
 
 export const getMyEnrollments = async () => {
