@@ -9,6 +9,8 @@ export default function Labs() {
     <h2>User Credentials: iron_man/ stark123</h2>
     
     <a href="https://github.com/chaitanyajumale/-kambaz-next-js-ChaitanyaJumale">Github Link</a><br/>
+        <a href="https://kambaz-node-server-app-chaitanyajumale.onrender.com/">Render Link, Please hit the below URL before checking Kambaz</a><br/>
+                <a href="https://kambaz-node-server-app-chaitanyajumale.onrender.com/api/users">Render API link</a><br/>
       
      <h1>Labs</h1>
      <ul>
