@@ -39,6 +39,7 @@ export const findModulesForCourse = async (courseId: string) => {
   const response = await axios.get(`${COURSES_API}/${courseId}/modules`);
   return response.data;
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createModuleForCourse = async (courseId: string, moduleData: any) => {
   const response = await axiosWithCredentials.post(
@@ -48,13 +49,19 @@ export const createModuleForCourse = async (courseId: string, moduleData: any) =
   return response.data;
 };
 
-export const deleteModule = async (moduleId: string) => {
-  const response = await axiosWithCredentials.delete(`${MODULES_API}/${moduleId}`);
+export const deleteModule = async (courseId: string, moduleId: string) => {
+  const response = await axiosWithCredentials.delete(
+    `${COURSES_API}/${courseId}/modules/${moduleId}`
+  );
   return response.data;
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateModule = async (moduleData: any) => {
-  const { data } = await axiosWithCredentials.put(`${MODULES_API}/${moduleData._id}`, moduleData);
+export const updateModule = async (courseId: string, module: any) => {
+  const { data } = await axiosWithCredentials.put(
+    `${COURSES_API}/${courseId}/modules/${module._id}`,
+    module
+  );
   return data;
 };
 
@@ -62,6 +69,7 @@ export const findAssignmentsForCourse = async (courseId: string) => {
   const response = await axios.get(`${COURSES_API}/${courseId}/assignments`);
   return response.data;
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createAssignmentForCourse = async (courseId: string, assignmentData: any) => {
   const response = await axiosWithCredentials.post(
@@ -75,6 +83,7 @@ export const deleteAssignment = async (assignmentId: string) => {
   const response = await axiosWithCredentials.delete(`${ASSIGNMENTS_API}/${assignmentId}`);
   return response.data;
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateAssignment = async (assignmentData: any) => {
   const { data } = await axiosWithCredentials.put(

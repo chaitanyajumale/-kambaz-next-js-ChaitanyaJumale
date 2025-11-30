@@ -14,7 +14,13 @@ interface User {
 
 export default function AccountNavigation() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer) as { currentUser: User | null };
-  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+  
+  const links = currentUser 
+    ? currentUser.role === "ADMIN" 
+      ? ["Profile", "Users"] 
+      : ["Profile"]
+    : ["Signin", "Signup"];
+    
   const pathname = usePathname();
 
   return (

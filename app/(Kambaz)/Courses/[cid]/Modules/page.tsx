@@ -52,17 +52,19 @@ export default function Modules() {
   };
 
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(moduleId);
+    if (!courseId) return;
+    await client.deleteModule(courseId, moduleId);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(setModules(modules.filter((m: any) => m._id !== moduleId)));
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onUpdateModule = async (moduleToUpdate: any) => {
-    await client.updateModule(moduleToUpdate);
+  const onUpdateModule = async (module: any) => {
+    if (!courseId) return;
+    await client.updateModule(courseId, module);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const newModules = modules.map((m: any) => 
-      m._id === moduleToUpdate._id ? moduleToUpdate : m
+    const newModules = modules.map((m: any) =>
+      m._id === module._id ? module : m
     );
     dispatch(setModules(newModules));
   };
