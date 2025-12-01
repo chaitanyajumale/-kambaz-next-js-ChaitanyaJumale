@@ -9,7 +9,7 @@ interface Lesson {
 interface Module {
   _id: string;
   name: string;
-  course: string;
+  description?: string;
   lessons?: Lesson[];
   editing?: boolean;
 }
@@ -26,14 +26,14 @@ const modulesSlice = createSlice({
   name: "modules",
   initialState,
   reducers: {
-    setModules: (state, action: PayloadAction<Module[]>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setModules: (state, action: PayloadAction<any[]>) => {
       state.modules = action.payload;
     },
-    addModule: (state, action: PayloadAction<{ name: string; course: string }>) => {
+    addModule: (state, action: PayloadAction<{ name: string }>) => {
       const newModule: Module = {
         _id: uuidv4(),
         name: action.payload.name,
-        course: action.payload.course,
         lessons: [],
       };
       state.modules.push(newModule);
@@ -43,7 +43,8 @@ const modulesSlice = createSlice({
         (m) => m._id !== action.payload
       );
     },
-    updateModule: (state, action: PayloadAction<Module>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateModule: (state, action: PayloadAction<any>) => {
       state.modules = state.modules.map((m) =>
         m._id === action.payload._id ? action.payload : m
       );

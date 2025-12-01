@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
-import PeopleDetails from "../Details";
+import { useParams } from "next/navigation";
+import * as client from "../../../client";
 
 export default function PeopleTable({ 
   users = [], 
@@ -13,20 +14,25 @@ export default function PeopleTable({
   users?: any[]; 
   fetchUsers: () => void; 
 }) {
-  const [showDetails, setShowDetails] = useState(false);
-  const [showUserId, setShowUserId] = useState<string | null>(null);
+  const { cid } = useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [courseUsers, setCourseUsers] = useState<any[]>([]);
+
+  const fetchCourseUsers = async () => {
+    if (!cid) return;
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
+    const users = await client.findUsersForCourse(courseId);
+    setCourseUsers(users);
+  };
+
+  useEffect(() => {
+    fetchCourseUsers();
+  }, [cid]);
+
+  const displayUsers = users.length > 0 ? users : courseUsers;
 
   return (
     <div id="wd-people-table">
-      {showDetails && (
-        <PeopleDetails
-          uid={showUserId}
-          onClose={() => {
-            setShowDetails(false);
-            fetchUsers();
-          }}
-        />
-      )}
       <Table striped>
         <thead>
           <tr>
@@ -39,22 +45,13 @@ export default function PeopleTable({
           </tr>
         </thead>
         <tbody>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {users.map((user: any) => (
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {displayUsers.map((user: any) => (
             <tr key={user._id}>
               <td className="wd-full-name text-nowrap">
-                <span 
-                  className="text-decoration-none"
-                  onClick={() => {
-                    setShowDetails(true);
-                    setShowUserId(user._id);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaUserCircle className="me-2 fs-1 text-secondary" />
-                  <span className="wd-first-name">{user.firstName}</span>{" "}
-                  <span className="wd-last-name">{user.lastName}</span>
-                </span>
+                <FaUserCircle className="me-2 fs-1 text-secondary" />
+                <span className="wd-first-name">{user.firstName}</span>{" "}
+                <span className="wd-last-name">{user.lastName}</span>
               </td>
               <td className="wd-login-id">{user.loginId}</td>
               <td className="wd-section">{user.section}</td>
